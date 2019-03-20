@@ -39,6 +39,7 @@ func (s *Service) UploadToPool(stream lsvoucherds.Grpc_UploadToPoolServer) (err 
 	var poolId *string
 	var uploadId *string
 	var logTags *lslog.Tags
+	isFirstStreamRecv := true
 
 	for {
 		in, err := stream.Recv()
@@ -65,6 +66,24 @@ func (s *Service) UploadToPool(stream lsvoucherds.Grpc_UploadToPoolServer) (err 
 		logTags = &lslog.Tags{lslog.Tag_CustomerId: in.CustomerId}
 
 		r := lscb.Region(in.Region)
+
+		if isFirstStreamRecv {
+			// check that pool upload not already exists from other request
+			isExists, err := s.Ds.Voucher.Region(r).IsPoolUploadExists(in.CustomerId, in.PoolId, in.UploadId)
+			if err != nil {
+				lslog.Errorf(stream.Context(), err, "failed to check if pool upload exists.").WithTags(logTags).Write()
+				return lserr.WrapErrf(err, "failed to check if pool upload exists.")
+			}
+
+			if *isExists {
+				lslog.Errorf(stream.Context(), err, "pool upload with same id already exists.").WithTags(logTags).Write()
+				return lserr.NewErrf("pool upload with same id already exists.")
+			}
+
+			isFirstStreamRecv = false
+		}
+
+		// upload vouchers
 		for _, voucher := range in.Vouchers {
 			// add voucher batch to pool upload
 			err = s.Ds.Voucher.Region(r).AppendToPoolUpload(in.CustomerId, in.PoolId, in.UploadId, voucher)
@@ -94,5 +113,35 @@ func (s *Service) GetPoolStatus(ctx context.Context, in *lsvoucherds.GetPoolStat
 	}
 
 	o := lsvoucherds.GetPoolStatusRes{PoolsStatus: res}
+	return &o, nil
+}
+
+func (s *Service) DeletePool(ctx context.Context, in *lsvoucherds.DeletePoolReq) (out *lsvoucherds.DeletePoolRes, err error) {
+	defer RecoverAndResponse(ctx, &err)
+
+	region := lscb.Region(in.Region)
+	logTags := &lslog.Tags{lslog.Tag_CustomerId: in.CustomerId}
+
+	pool, err := s.Ds.Voucher.Region(region).GetPool(in.CustomerId, in.PoolId)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to get pool.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to get pool.")
+	}
+
+	for uploadId := range pool.Status {
+		err := s.Ds.Voucher.Region(region).DeletePoolUpload(in.CustomerId, in.PoolId, uploadId)
+		if err != nil {
+			lslog.Errorf(ctx, err, "failed to delete pool upload.").WithTags(logTags).Write()
+			return nil, lserr.WrapErrf(err, "failed to delete pool upload.")
+		}
+	}
+
+	err = s.Ds.Voucher.Region(region).DeletePool(in.CustomerId, in.PoolId)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to delete pool.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to delete pool.")
+	}
+
+	o := lsvoucherds.DeletePoolRes{}
 	return &o, nil
 }

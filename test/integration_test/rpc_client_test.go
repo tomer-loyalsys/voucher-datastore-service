@@ -63,7 +63,7 @@ func TestUpload(t *testing.T) {
 		}
 	}
 	reply, err := stream.CloseAndRecv()
-	assert.NoError(t, err, "failed on calc total points test. err: %v", lserr.WithStack(err))
+	assert.NoError(t, err, "failed on pool upload test. err: %v", lserr.WithStack(err))
 
 	println(fmt.Sprintf("elapsed time: %v", time.Since(startTime)))
 	println(fmt.Sprintf("%+v", reply))
@@ -72,9 +72,17 @@ func TestUpload(t *testing.T) {
 func TestGetPoolStatusRpc(t *testing.T) {
 	in := lsvoucherds.GetPoolStatusReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolIds: []string{clientParams.poolId}}
 
-	out, err := s.GetPoolStatus(context.Background(), &in)
+	out, err := grpcClient.GetPoolStatus(context.Background(), &in)
 	println(fmt.Sprintf("%+v", out))
-	assert.NoError(t, err, "failed on calc total points test. err: %v", lserr.WithStack(err))
+	assert.NoError(t, err, "failed on get pool status test. err: %v", lserr.WithStack(err))
+}
+
+func TestDeletePoolRpc(t *testing.T) {
+	in := lsvoucherds.DeletePoolReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolId: clientParams.poolId}
+
+	out, err := grpcClient.DeletePool(context.Background(), &in)
+	println(fmt.Sprintf("%+v", out))
+	assert.NoError(t, err, "failed on delete pool test. err: %v", lserr.WithStack(err))
 }
 
 func createClient() {

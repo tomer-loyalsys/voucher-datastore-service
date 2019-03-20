@@ -113,10 +113,50 @@ func (v *voucher) UpsertPool(customerId string, poolId string, uploadId string, 
 	return nil
 }
 
+func (v *voucher) DeletePool(customerId string, poolId string) error {
+	key := fmt.Sprintf(poolKeyFormat, customerId, poolId)
+
+	_, err := v.bucket.Remove(key, 0)
+	if err != nil {
+		return lserr.WrapErrf(err, "failed to delete pool.")
+	}
+
+	return nil
+}
+
+func (v *voucher) IsPoolUploadExists(customerId string, poolId string, uploadId string) (*bool, error) {
+	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+
+	_, _, err := v.bucket.ListSize(key)
+	if err != nil {
+		if gocb.IsKeyNotFoundError(err) {
+			isExists := false
+			return &isExists, nil
+		} else {
+			return nil, lserr.WrapErrf(err, "failed to check if pool upload exists.")
+		}
+	}
+
+	isExists := true
+
+	return &isExists, nil
+}
+
+func (v *voucher) CreatePoolUpload(customerId string, poolId string, uploadId string) error {
+	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+
+	_, err := v.bucket.Insert(key, []string{}, 0)
+	if err != nil {
+		return lserr.WrapErrf(err, "failed to add new voucher to set.")
+	}
+
+	return nil
+}
+
 func (v *voucher) AppendToPoolUpload(customerId string, poolId string, uploadId string, voucher string) error {
 	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
 
-	_, err := v.bucket.ListAppend(key, voucher, true)
+	_, err := v.bucket.QueuePush(key, voucher, true)
 	if err != nil {
 		return lserr.WrapErrf(err, "failed to add new voucher to set.")
 	}
@@ -127,10 +167,21 @@ func (v *voucher) AppendToPoolUpload(customerId string, poolId string, uploadId 
 func (v *voucher) GetPoolUploadSize(customerId string, poolId string, uploadId string) (uint, error) {
 	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
 
-	size, _, err := v.bucket.ListSize(key)
+	size, _, err := v.bucket.QueueSize(key)
 	if err != nil {
 		return 0, lserr.WrapErrf(err, "failed to get upload vouchers size.")
 	}
 
 	return size, nil
+}
+
+func (v *voucher) DeletePoolUpload(customerId string, poolId string, uploadId string) error {
+	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+
+	_, err := v.bucket.Remove(key, 0)
+	if err != nil {
+		return lserr.WrapErrf(err, "failed to delete pool upload.")
+	}
+
+	return nil
 }
