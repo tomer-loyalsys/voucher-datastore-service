@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	poolKeyFormat   = "cus::%v::pool::%v"
-	uploadKeyFormat = "cus::%v::pool::%v::upload::%v"
+	poolKeyFormat           = "cus::%v::pool::%v"
+	poolUploadKeyFormat     = "cus::%v::pool::%v::upload::%v"
+	usedPoolUploadKeyFormat = "cus::%v::pool::%v::upload::%v::used"
 )
 
 type voucher struct{ bucket *gocb.Bucket }
@@ -47,7 +48,7 @@ func (v *voucher) IsPoolExists(customerId string, poolId string) (*bool, error) 
 			isExists := false
 			return &isExists, nil
 		} else {
-			return nil, lserr.WrapErrf(err, "failed to lookup for `type` path in points tracking.")
+			return nil, lserr.WrapErrf(err, "failed to lookup for `type` path in pool.")
 		}
 	}
 
@@ -79,7 +80,7 @@ func (v *voucher) CreatePool(customerId string, poolId string, pool lsvoucherds_
 	return nil
 }
 
-func (v *voucher) GetPoolStatus(customerId string, poolId string) (total *int64, available *int64, err error) {
+func (v *voucher) GetPoolAvailability(customerId string, poolId string) (total *int64, available *int64, err error) {
 	key := fmt.Sprintf(poolKeyFormat, customerId, poolId)
 
 	var totalVal int64
@@ -97,6 +98,18 @@ func (v *voucher) GetPoolStatus(customerId string, poolId string) (total *int64,
 	return &totalVal, &availableVal, nil
 }
 
+func (v *voucher) GetPoolStatus(customerId string, poolId string) (*lsvoucherds_entity.PoolStatus, error) {
+	key := fmt.Sprintf(poolKeyFormat, customerId, poolId)
+
+	var poolStatus lsvoucherds_entity.PoolStatus
+	_, err := v.bucket.MapGet(key, "status", &poolStatus)
+	if err != nil {
+		return nil, lserr.WrapErrf(err, "failed to get pool status.")
+	}
+
+	return &poolStatus, nil
+}
+
 func (v *voucher) UpsertPool(customerId string, poolId string, uploadId string, uploadStatus lsvoucherds_entity.UploadStatus) error {
 	key := fmt.Sprintf(poolKeyFormat, customerId, poolId)
 
@@ -107,7 +120,7 @@ func (v *voucher) UpsertPool(customerId string, poolId string, uploadId string, 
 		Execute()
 
 	if err != nil {
-		return lserr.WrapErrf(err, "failed to upsert points tracking.")
+		return lserr.WrapErrf(err, "failed to upsert pool.")
 	}
 
 	return nil
@@ -125,7 +138,7 @@ func (v *voucher) DeletePool(customerId string, poolId string) error {
 }
 
 func (v *voucher) IsPoolUploadExists(customerId string, poolId string, uploadId string) (*bool, error) {
-	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+	key := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
 
 	_, _, err := v.bucket.ListSize(key)
 	if err != nil {
@@ -143,7 +156,7 @@ func (v *voucher) IsPoolUploadExists(customerId string, poolId string, uploadId 
 }
 
 func (v *voucher) CreatePoolUpload(customerId string, poolId string, uploadId string) error {
-	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+	key := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
 
 	_, err := v.bucket.Insert(key, []string{}, 0)
 	if err != nil {
@@ -154,18 +167,54 @@ func (v *voucher) CreatePoolUpload(customerId string, poolId string, uploadId st
 }
 
 func (v *voucher) AppendToPoolUpload(customerId string, poolId string, uploadId string, voucher string) error {
-	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+	key := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
 
 	_, err := v.bucket.QueuePush(key, voucher, true)
 	if err != nil {
-		return lserr.WrapErrf(err, "failed to add new voucher to set.")
+		return lserr.WrapErrf(err, "failed to add new voucher to pool upload list.")
+	}
+
+	return nil
+}
+
+func (v *voucher) PopFromPoolUpload(customerId string, poolId string, uploadId string) (*string, error) {
+	poolUploadKey := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
+
+	var voucher string
+	_, err := v.bucket.QueuePop(poolUploadKey, &voucher)
+	if err != nil {
+		return nil, lserr.WrapErrf(err, "failed to pop voucher from list.")
+	}
+
+	// update available counter
+	poolKey := fmt.Sprintf(poolKeyFormat, customerId, poolId)
+	availablePath := "available"
+	statusPath := fmt.Sprintf("status.%v.available", uploadId)
+	_, err = v.bucket.MutateIn(poolKey, 0, 0).
+		Counter(availablePath, -1, false).
+		Counter(statusPath, -1, false).
+		Execute()
+
+	if err != nil {
+		return nil, lserr.WrapErrf(err, "failed to update poool available counter.")
+	}
+
+	return &voucher, nil
+}
+
+func (v *voucher) PushToUsedPoolUpload(customerId string, poolId string, uploadId string, voucher string) error {
+	key := fmt.Sprintf(usedPoolUploadKeyFormat, customerId, poolId, uploadId)
+
+	_, err := v.bucket.QueuePush(key, voucher, true)
+	if err != nil {
+		return lserr.WrapErrf(err, "failed to add voucher to used list.")
 	}
 
 	return nil
 }
 
 func (v *voucher) GetPoolUploadSize(customerId string, poolId string, uploadId string) (uint, error) {
-	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+	key := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
 
 	size, _, err := v.bucket.QueueSize(key)
 	if err != nil {
@@ -176,11 +225,30 @@ func (v *voucher) GetPoolUploadSize(customerId string, poolId string, uploadId s
 }
 
 func (v *voucher) DeletePoolUpload(customerId string, poolId string, uploadId string) error {
-	key := fmt.Sprintf(uploadKeyFormat, customerId, poolId, uploadId)
+	key := fmt.Sprintf(poolUploadKeyFormat, customerId, poolId, uploadId)
 
 	_, err := v.bucket.Remove(key, 0)
 	if err != nil {
-		return lserr.WrapErrf(err, "failed to delete pool upload.")
+		if gocb.IsKeyNotFoundError(err) {
+			return nil
+		} else {
+			return lserr.WrapErrf(err, "failed to delete pool upload.")
+		}
+	}
+
+	return nil
+}
+
+func (v *voucher) DeleteUsedPoolUpload(customerId string, poolId string, uploadId string) error {
+	key := fmt.Sprintf(usedPoolUploadKeyFormat, customerId, poolId, uploadId)
+
+	_, err := v.bucket.Remove(key, 0)
+	if err != nil {
+		if gocb.IsKeyNotFoundError(err) {
+			return nil
+		} else {
+			return lserr.WrapErrf(err, "failed to delete used pool upload.")
+		}
 	}
 
 	return nil

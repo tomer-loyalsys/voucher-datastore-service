@@ -31,18 +31,18 @@ message UploadToPoolRes {
 }
 
 // Get pool status rpc
-message GetPoolStatusReq {
+message GetPoolAvailabilityReq {
     string region = 1;
     string customerId = 2;
     repeated string poolIds = 3;
 }
-message GetPoolStatusRes {
-    message PoolStatus {
+message GetPoolAvailabilityRes {
+    message GetPoolAvailability {
         int64 total = 1;
         int64 available = 2;
     }
 
-    map<string, PoolStatus> PoolsStatus = 1;
+    map<string, GetPoolAvailability> PoolAvailability = 1;
 }
 
 // Delete all pool uploads vouchers rpc
@@ -55,6 +55,16 @@ message DeletePoolRes {
 
 }
 
+// pop voucher from pool list rpc
+message PopFromPoolReq {
+    string region = 1;
+    string customerId = 2;
+    string poolId = 3;
+}
+message PopFromPoolRes {
+    string voucher = 1;
+}
+
 service Grpc {
     rpc Ping (PingReq) returns (PingRes) {
     }
@@ -65,9 +75,12 @@ service Grpc {
     rpc UploadToPool (stream UploadToPoolReq) returns (UploadToPoolRes) {
     }
 
-    rpc GetPoolStatus (GetPoolStatusReq) returns (GetPoolStatusRes) {
+    rpc GetPoolAvailability (GetPoolAvailabilityReq) returns (GetPoolAvailabilityRes) {
     }
 
     rpc DeletePool (DeletePoolReq) returns (DeletePoolRes) {
+    }
+
+    rpc PopFromPool (PopFromPoolReq) returns (PopFromPoolRes) {
     }
 }

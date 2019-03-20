@@ -18,10 +18,13 @@ type rpcClientTestParams struct {
 	region     string
 	customerId string
 	poolId     string
+	uploadNum  int
+	batchNum   int
+	batchSize  int
 }
 
 var grpcClient lsvoucherds.GrpcClient
-var clientParams = rpcClientTestParams{region: "europe", customerId: "1", poolId: "343GDF655YH7TGS67"}
+var clientParams = rpcClientTestParams{region: "europe", customerId: "1", poolId: "343GDF655YH7TGS67", uploadNum: 5, batchNum: 10, batchSize: 3000}
 
 func init() {
 	createClient()
@@ -35,44 +38,46 @@ func TestPingCient(t *testing.T) {
 }
 
 func TestUpload(t *testing.T) {
-	var voucherBatch [][]string
 
-	for i := 0; i < 10; i++ {
-		var vouchersBatch []string
-		for i := 0; i < 3000; i++ {
-			vouchersBatch = append(vouchersBatch, fakeStringGenerator(10))
-		}
-		voucherBatch = append(voucherBatch, vouchersBatch)
-	}
-
-	in := lsvoucherds.UploadToPoolReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolId: clientParams.poolId, UploadId: fakeStringGenerator(5)}
-
-	startTime := lstime.NowUTC()
-
-	stream, err := grpcClient.UploadToPool(context.Background())
-	if err != nil {
-		log.Fatalf("failed to create stream.")
-	}
-	for _, batch := range voucherBatch {
-		in.Vouchers = batch
-		if err := stream.Send(&in); err != nil {
-			if err == io.EOF {
-				break
+	for i := 0; i < clientParams.uploadNum; i++ {
+		voucherBatch := make([][]string, 0, clientParams.batchNum)
+		for i := 0; i < clientParams.batchNum; i++ {
+			vouchersBatch := make([]string, 0, clientParams.batchSize)
+			for i := 0; i < clientParams.batchSize; i++ {
+				vouchersBatch = append(vouchersBatch, fakeStringGenerator(10))
 			}
-			assert.NoError(t, err, "failed in stream send. err: %v", lserr.WithStack(err))
+			voucherBatch = append(voucherBatch, vouchersBatch)
 		}
-	}
-	reply, err := stream.CloseAndRecv()
-	assert.NoError(t, err, "failed on pool upload test. err: %v", lserr.WithStack(err))
 
-	println(fmt.Sprintf("elapsed time: %v", time.Since(startTime)))
-	println(fmt.Sprintf("%+v", reply))
+		in := lsvoucherds.UploadToPoolReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolId: clientParams.poolId, UploadId: fakeStringGenerator(5)}
+
+		startTime := lstime.NowUTC()
+
+		stream, err := grpcClient.UploadToPool(context.Background())
+		if err != nil {
+			log.Fatalf("failed to create stream.")
+		}
+		for _, batch := range voucherBatch {
+			in.Vouchers = batch
+			if err := stream.Send(&in); err != nil {
+				if err == io.EOF {
+					break
+				}
+				assert.NoError(t, err, "failed in stream send. err: %v", lserr.WithStack(err))
+			}
+		}
+		reply, err := stream.CloseAndRecv()
+		assert.NoError(t, err, "failed on pool upload test. err: %v", lserr.WithStack(err))
+
+		println(fmt.Sprintf("elapsed time: %v", time.Since(startTime)))
+		println(fmt.Sprintf("%+v", reply))
+	}
 }
 
 func TestGetPoolStatusRpc(t *testing.T) {
-	in := lsvoucherds.GetPoolStatusReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolIds: []string{clientParams.poolId}}
+	in := lsvoucherds.GetPoolAvailabilityReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolIds: []string{clientParams.poolId}}
 
-	out, err := grpcClient.GetPoolStatus(context.Background(), &in)
+	out, err := grpcClient.GetPoolAvailability(context.Background(), &in)
 	println(fmt.Sprintf("%+v", out))
 	assert.NoError(t, err, "failed on get pool status test. err: %v", lserr.WithStack(err))
 }
@@ -83,6 +88,16 @@ func TestDeletePoolRpc(t *testing.T) {
 	out, err := grpcClient.DeletePool(context.Background(), &in)
 	println(fmt.Sprintf("%+v", out))
 	assert.NoError(t, err, "failed on delete pool test. err: %v", lserr.WithStack(err))
+}
+
+func TestPopFromPoolRpc(t *testing.T) {
+	for i := 0; i < (clientParams.uploadNum * clientParams.batchNum * clientParams.batchSize); i++ {
+		in := lsvoucherds.PopFromPoolReq{Region: clientParams.region, CustomerId: clientParams.customerId, PoolId: clientParams.poolId}
+
+		out, err := grpcClient.PopFromPool(context.Background(), &in)
+		println(fmt.Sprintf("%+v", out))
+		assert.NoError(t, err, "failed on pop from poll test. err: %v", lserr.WithStack(err))
+	}
 }
 
 func createClient() {

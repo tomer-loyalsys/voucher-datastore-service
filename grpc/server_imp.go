@@ -47,8 +47,8 @@ func (s *Service) UploadToPool(stream lsvoucherds.Grpc_UploadToPoolServer) (err 
 		if err == io.EOF {
 			uploadStat, err := s.addToPool(stream.Context(), *region, *customerId, *poolId, *uploadId)
 			if err != nil {
-				lslog.Errorf(stream.Context(), err, "failed to add upload to pool.").WithTags(logTags).Write()
-				return lserr.WrapErrf(err, "failed to add upload to pool.")
+				lslog.Errorf(stream.Context(), err, "failed to add pool upload to pool.").WithTags(logTags).Write()
+				return lserr.WrapErrf(err, "failed to add pool upload to pool.")
 			}
 
 			return stream.SendAndClose(&lsvoucherds.UploadToPoolRes{TotalUpload: uploadStat.Total})
@@ -76,8 +76,8 @@ func (s *Service) UploadToPool(stream lsvoucherds.Grpc_UploadToPoolServer) (err 
 			}
 
 			if *isExists {
-				lslog.Errorf(stream.Context(), err, "pool upload with same id already exists.").WithTags(logTags).Write()
-				return lserr.NewErrf("pool upload with same id already exists.")
+				lslog.Errorf(stream.Context(), err, "pool upload with same upload id already exists.").WithTags(logTags).Write()
+				return lserr.NewErrf("pool upload with same upload id already exists.")
 			}
 
 			isFirstStreamRecv = false
@@ -85,38 +85,73 @@ func (s *Service) UploadToPool(stream lsvoucherds.Grpc_UploadToPoolServer) (err 
 
 		// upload vouchers
 		for _, voucher := range in.Vouchers {
-			// add voucher batch to pool upload
 			err = s.Ds.Voucher.Region(r).AppendToPoolUpload(in.CustomerId, in.PoolId, in.UploadId, voucher)
 			if err != nil {
-				lslog.Errorf(stream.Context(), err, "failed to insert voucher to upload doc.").WithTags(logTags).Write()
-				return lserr.WrapErrf(err, "failed to insert voucher to upload doc.")
+				lslog.Errorf(stream.Context(), err, "failed to insert voucher to pool upload doc.").WithTags(logTags).Write()
+				return lserr.WrapErrf(err, "failed to insert voucher to pool upload doc.")
 			}
 		}
 	}
 }
 
-func (s *Service) GetPoolStatus(ctx context.Context, in *lsvoucherds.GetPoolStatusReq) (out *lsvoucherds.GetPoolStatusRes, err error) {
+func (s *Service) GetPoolAvailability(ctx context.Context, in *lsvoucherds.GetPoolAvailabilityReq) (out *lsvoucherds.GetPoolAvailabilityRes, err error) {
 	defer RecoverAndResponse(ctx, &err)
 
 	region := lscb.Region(in.Region)
 	logTags := &lslog.Tags{lslog.Tag_CustomerId: in.CustomerId}
 
-	res := make(map[string]*lsvoucherds.GetPoolStatusRes_PoolStatus, len(in.PoolIds))
+	res := make(map[string]*lsvoucherds.GetPoolAvailabilityRes_GetPoolAvailability, len(in.PoolIds))
 	for _, poolId := range in.PoolIds {
-		total, available, err := s.Ds.Voucher.Region(region).GetPoolStatus(in.CustomerId, poolId)
+		total, available, err := s.Ds.Voucher.Region(region).GetPoolAvailability(in.CustomerId, poolId)
 		if err != nil {
-			lslog.Errorf(ctx, err, "failed to get pool status.").WithTags(logTags).Write()
-			return nil, lserr.WrapErrf(err, "failed to get pool status.")
+			lslog.Errorf(ctx, err, "failed to get pool availability.").WithTags(logTags).Write()
+			return nil, lserr.WrapErrf(err, "failed to get pool availability.")
 		}
 
-		res[poolId] = &lsvoucherds.GetPoolStatusRes_PoolStatus{Total: *total, Available: *available}
+		res[poolId] = &lsvoucherds.GetPoolAvailabilityRes_GetPoolAvailability{Total: *total, Available: *available}
 	}
 
-	o := lsvoucherds.GetPoolStatusRes{PoolsStatus: res}
+	o := lsvoucherds.GetPoolAvailabilityRes{PoolAvailability: res}
 	return &o, nil
 }
 
 func (s *Service) DeletePool(ctx context.Context, in *lsvoucherds.DeletePoolReq) (out *lsvoucherds.DeletePoolRes, err error) {
+	defer RecoverAndResponse(ctx, &err)
+
+	region := lscb.Region(in.Region)
+	logTags := &lslog.Tags{lslog.Tag_CustomerId: in.CustomerId}
+
+	poolStatus, err := s.Ds.Voucher.Region(region).GetPoolStatus(in.CustomerId, in.PoolId)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to get pool status.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to get pool status.")
+	}
+
+	for uploadId := range *poolStatus {
+		err := s.Ds.Voucher.Region(region).DeletePoolUpload(in.CustomerId, in.PoolId, uploadId)
+		if err != nil {
+			lslog.Errorf(ctx, err, "failed to delete pool upload.").WithTags(logTags).Write()
+			return nil, lserr.WrapErrf(err, "failed to delete pool upload.")
+		}
+
+		err = s.Ds.Voucher.Region(region).DeleteUsedPoolUpload(in.CustomerId, in.PoolId, uploadId)
+		if err != nil {
+			lslog.Errorf(ctx, err, "failed to delete used pool upload.").WithTags(logTags).Write()
+			return nil, lserr.WrapErrf(err, "failed to used delete pool upload.")
+		}
+	}
+
+	err = s.Ds.Voucher.Region(region).DeletePool(in.CustomerId, in.PoolId)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to delete pool.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to delete pool.")
+	}
+
+	o := lsvoucherds.DeletePoolRes{}
+	return &o, nil
+}
+
+func (s *Service) PopFromPool(ctx context.Context, in *lsvoucherds.PopFromPoolReq) (out *lsvoucherds.PopFromPoolRes, err error) {
 	defer RecoverAndResponse(ctx, &err)
 
 	region := lscb.Region(in.Region)
@@ -128,20 +163,40 @@ func (s *Service) DeletePool(ctx context.Context, in *lsvoucherds.DeletePoolReq)
 		return nil, lserr.WrapErrf(err, "failed to get pool.")
 	}
 
-	for uploadId := range pool.Status {
-		err := s.Ds.Voucher.Region(region).DeletePoolUpload(in.CustomerId, in.PoolId, uploadId)
-		if err != nil {
-			lslog.Errorf(ctx, err, "failed to delete pool upload.").WithTags(logTags).Write()
-			return nil, lserr.WrapErrf(err, "failed to delete pool upload.")
+	// check that pool has vouchers available
+	if pool.Available <= 0 {
+		lslog.Errorf(ctx, err, "pool is empty.").WithTags(logTags).Write()
+		return nil, lserr.NewErrf("pool is empty.")
+	}
+
+	// get pool with upload id with available vouchers
+	var poolUploadId *string
+	for uploadId, status := range pool.Status {
+		if status.Available > 0 {
+			poolUploadId = &uploadId
+			break
 		}
 	}
 
-	err = s.Ds.Voucher.Region(region).DeletePool(in.CustomerId, in.PoolId)
-	if err != nil {
-		lslog.Errorf(ctx, err, "failed to delete pool.").WithTags(logTags).Write()
-		return nil, lserr.WrapErrf(err, "failed to delete pool.")
+	if poolUploadId == nil {
+		lslog.Errorf(ctx, err, "failed to get pool upload id with available vouchers.").WithTags(logTags).Write()
+		return nil, lserr.NewErrf("failed to get pool upload id with available vouchers.")
 	}
 
-	o := lsvoucherds.DeletePoolRes{}
+	// pop voucher from list
+	voucher, err := s.Ds.Voucher.Region(region).PopFromPoolUpload(in.CustomerId, in.PoolId, *poolUploadId)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to pop voucher from  pool upload.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to pop voucher from  pool upload.")
+	}
+
+	// push to used pool upload list
+	err = s.Ds.Voucher.Region(region).PushToUsedPoolUpload(in.CustomerId, in.PoolId, *poolUploadId, *voucher)
+	if err != nil {
+		lslog.Errorf(ctx, err, "failed to add voucher to used list.").WithTags(logTags).Write()
+		return nil, lserr.WrapErrf(err, "failed to add voucher to used list.")
+	}
+
+	o := lsvoucherds.PopFromPoolRes{Voucher: *voucher}
 	return &o, nil
 }

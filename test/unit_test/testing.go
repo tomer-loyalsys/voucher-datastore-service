@@ -15,14 +15,14 @@ var s *grpc.Service
 
 func init() {
 	const (
-		envVarGoogleProjectId         lsenv.EnvVar = "GOOGLE_PROJECT_ID"
-		envVarCustomerDsServerAddress lsenv.EnvVar = "POINTS_DATASTORE_SERVER_ADDRESS"
-		envVarHttpHealthServerPort    lsenv.EnvVar = "HTTP_HEALTH_SERVER_PORT"
+		envVarGoogleProjectId        lsenv.EnvVar = "GOOGLE_PROJECT_ID"
+		envVarVoucherDsServerAddress lsenv.EnvVar = "VOUCHER_DATASTORE_SERVER_ADDRESS"
+		envVarHttpHealthServerPort   lsenv.EnvVar = "HTTP_HEALTH_SERVER_PORT"
 	)
 
 	var envVarToRead = []lsenv.EnvVar{
 		envVarGoogleProjectId,
-		envVarCustomerDsServerAddress,
+		envVarVoucherDsServerAddress,
 		envVarHttpHealthServerPort,
 	}
 	// load environment variables

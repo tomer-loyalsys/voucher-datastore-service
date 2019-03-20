@@ -276,7 +276,7 @@ func (m *UploadToPoolRes) GetTotalUpload() int64 {
 }
 
 // Get pool status rpc
-type GetPoolStatusReq struct {
+type GetPoolAvailabilityReq struct {
 	Region               string   `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
 	CustomerId           string   `protobuf:"bytes,2,opt,name=customerId,proto3" json:"customerId,omitempty"`
 	PoolIds              []string `protobuf:"bytes,3,rep,name=poolIds,proto3" json:"poolIds,omitempty"`
@@ -285,92 +285,92 @@ type GetPoolStatusReq struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetPoolStatusReq) Reset()         { *m = GetPoolStatusReq{} }
-func (m *GetPoolStatusReq) String() string { return proto.CompactTextString(m) }
-func (*GetPoolStatusReq) ProtoMessage()    {}
-func (*GetPoolStatusReq) Descriptor() ([]byte, []int) {
+func (m *GetPoolAvailabilityReq) Reset()         { *m = GetPoolAvailabilityReq{} }
+func (m *GetPoolAvailabilityReq) String() string { return proto.CompactTextString(m) }
+func (*GetPoolAvailabilityReq) ProtoMessage()    {}
+func (*GetPoolAvailabilityReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1e572ab4fba54a2c, []int{6}
 }
 
-func (m *GetPoolStatusReq) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetPoolStatusReq.Unmarshal(m, b)
+func (m *GetPoolAvailabilityReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetPoolAvailabilityReq.Unmarshal(m, b)
 }
-func (m *GetPoolStatusReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetPoolStatusReq.Marshal(b, m, deterministic)
+func (m *GetPoolAvailabilityReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetPoolAvailabilityReq.Marshal(b, m, deterministic)
 }
-func (m *GetPoolStatusReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPoolStatusReq.Merge(m, src)
+func (m *GetPoolAvailabilityReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetPoolAvailabilityReq.Merge(m, src)
 }
-func (m *GetPoolStatusReq) XXX_Size() int {
-	return xxx_messageInfo_GetPoolStatusReq.Size(m)
+func (m *GetPoolAvailabilityReq) XXX_Size() int {
+	return xxx_messageInfo_GetPoolAvailabilityReq.Size(m)
 }
-func (m *GetPoolStatusReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetPoolStatusReq.DiscardUnknown(m)
+func (m *GetPoolAvailabilityReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetPoolAvailabilityReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetPoolStatusReq proto.InternalMessageInfo
+var xxx_messageInfo_GetPoolAvailabilityReq proto.InternalMessageInfo
 
-func (m *GetPoolStatusReq) GetRegion() string {
+func (m *GetPoolAvailabilityReq) GetRegion() string {
 	if m != nil {
 		return m.Region
 	}
 	return ""
 }
 
-func (m *GetPoolStatusReq) GetCustomerId() string {
+func (m *GetPoolAvailabilityReq) GetCustomerId() string {
 	if m != nil {
 		return m.CustomerId
 	}
 	return ""
 }
 
-func (m *GetPoolStatusReq) GetPoolIds() []string {
+func (m *GetPoolAvailabilityReq) GetPoolIds() []string {
 	if m != nil {
 		return m.PoolIds
 	}
 	return nil
 }
 
-type GetPoolStatusRes struct {
-	PoolsStatus          map[string]*GetPoolStatusRes_PoolStatus `protobuf:"bytes,1,rep,name=PoolsStatus,proto3" json:"PoolsStatus,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}                                `json:"-"`
-	XXX_unrecognized     []byte                                  `json:"-"`
-	XXX_sizecache        int32                                   `json:"-"`
+type GetPoolAvailabilityRes struct {
+	PoolAvailability     map[string]*GetPoolAvailabilityRes_GetPoolAvailability `protobuf:"bytes,1,rep,name=PoolAvailability,proto3" json:"PoolAvailability,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}                                               `json:"-"`
+	XXX_unrecognized     []byte                                                 `json:"-"`
+	XXX_sizecache        int32                                                  `json:"-"`
 }
 
-func (m *GetPoolStatusRes) Reset()         { *m = GetPoolStatusRes{} }
-func (m *GetPoolStatusRes) String() string { return proto.CompactTextString(m) }
-func (*GetPoolStatusRes) ProtoMessage()    {}
-func (*GetPoolStatusRes) Descriptor() ([]byte, []int) {
+func (m *GetPoolAvailabilityRes) Reset()         { *m = GetPoolAvailabilityRes{} }
+func (m *GetPoolAvailabilityRes) String() string { return proto.CompactTextString(m) }
+func (*GetPoolAvailabilityRes) ProtoMessage()    {}
+func (*GetPoolAvailabilityRes) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1e572ab4fba54a2c, []int{7}
 }
 
-func (m *GetPoolStatusRes) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetPoolStatusRes.Unmarshal(m, b)
+func (m *GetPoolAvailabilityRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetPoolAvailabilityRes.Unmarshal(m, b)
 }
-func (m *GetPoolStatusRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetPoolStatusRes.Marshal(b, m, deterministic)
+func (m *GetPoolAvailabilityRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetPoolAvailabilityRes.Marshal(b, m, deterministic)
 }
-func (m *GetPoolStatusRes) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPoolStatusRes.Merge(m, src)
+func (m *GetPoolAvailabilityRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetPoolAvailabilityRes.Merge(m, src)
 }
-func (m *GetPoolStatusRes) XXX_Size() int {
-	return xxx_messageInfo_GetPoolStatusRes.Size(m)
+func (m *GetPoolAvailabilityRes) XXX_Size() int {
+	return xxx_messageInfo_GetPoolAvailabilityRes.Size(m)
 }
-func (m *GetPoolStatusRes) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetPoolStatusRes.DiscardUnknown(m)
+func (m *GetPoolAvailabilityRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetPoolAvailabilityRes.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetPoolStatusRes proto.InternalMessageInfo
+var xxx_messageInfo_GetPoolAvailabilityRes proto.InternalMessageInfo
 
-func (m *GetPoolStatusRes) GetPoolsStatus() map[string]*GetPoolStatusRes_PoolStatus {
+func (m *GetPoolAvailabilityRes) GetPoolAvailability() map[string]*GetPoolAvailabilityRes_GetPoolAvailability {
 	if m != nil {
-		return m.PoolsStatus
+		return m.PoolAvailability
 	}
 	return nil
 }
 
-type GetPoolStatusRes_PoolStatus struct {
+type GetPoolAvailabilityRes_GetPoolAvailability struct {
 	Total                int64    `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Available            int64    `protobuf:"varint,2,opt,name=available,proto3" json:"available,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -378,39 +378,43 @@ type GetPoolStatusRes_PoolStatus struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetPoolStatusRes_PoolStatus) Reset()         { *m = GetPoolStatusRes_PoolStatus{} }
-func (m *GetPoolStatusRes_PoolStatus) String() string { return proto.CompactTextString(m) }
-func (*GetPoolStatusRes_PoolStatus) ProtoMessage()    {}
-func (*GetPoolStatusRes_PoolStatus) Descriptor() ([]byte, []int) {
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) Reset() {
+	*m = GetPoolAvailabilityRes_GetPoolAvailability{}
+}
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) String() string {
+	return proto.CompactTextString(m)
+}
+func (*GetPoolAvailabilityRes_GetPoolAvailability) ProtoMessage() {}
+func (*GetPoolAvailabilityRes_GetPoolAvailability) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1e572ab4fba54a2c, []int{7, 0}
 }
 
-func (m *GetPoolStatusRes_PoolStatus) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetPoolStatusRes_PoolStatus.Unmarshal(m, b)
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability.Unmarshal(m, b)
 }
-func (m *GetPoolStatusRes_PoolStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetPoolStatusRes_PoolStatus.Marshal(b, m, deterministic)
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability.Marshal(b, m, deterministic)
 }
-func (m *GetPoolStatusRes_PoolStatus) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPoolStatusRes_PoolStatus.Merge(m, src)
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability.Merge(m, src)
 }
-func (m *GetPoolStatusRes_PoolStatus) XXX_Size() int {
-	return xxx_messageInfo_GetPoolStatusRes_PoolStatus.Size(m)
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) XXX_Size() int {
+	return xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability.Size(m)
 }
-func (m *GetPoolStatusRes_PoolStatus) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetPoolStatusRes_PoolStatus.DiscardUnknown(m)
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetPoolStatusRes_PoolStatus proto.InternalMessageInfo
+var xxx_messageInfo_GetPoolAvailabilityRes_GetPoolAvailability proto.InternalMessageInfo
 
-func (m *GetPoolStatusRes_PoolStatus) GetTotal() int64 {
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) GetTotal() int64 {
 	if m != nil {
 		return m.Total
 	}
 	return 0
 }
 
-func (m *GetPoolStatusRes_PoolStatus) GetAvailable() int64 {
+func (m *GetPoolAvailabilityRes_GetPoolAvailability) GetAvailable() int64 {
 	if m != nil {
 		return m.Available
 	}
@@ -504,6 +508,101 @@ func (m *DeletePoolRes) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeletePoolRes proto.InternalMessageInfo
 
+// pop voucher from pool list rpc
+type PopFromPoolReq struct {
+	Region               string   `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
+	CustomerId           string   `protobuf:"bytes,2,opt,name=customerId,proto3" json:"customerId,omitempty"`
+	PoolId               string   `protobuf:"bytes,3,opt,name=poolId,proto3" json:"poolId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PopFromPoolReq) Reset()         { *m = PopFromPoolReq{} }
+func (m *PopFromPoolReq) String() string { return proto.CompactTextString(m) }
+func (*PopFromPoolReq) ProtoMessage()    {}
+func (*PopFromPoolReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1e572ab4fba54a2c, []int{10}
+}
+
+func (m *PopFromPoolReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PopFromPoolReq.Unmarshal(m, b)
+}
+func (m *PopFromPoolReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PopFromPoolReq.Marshal(b, m, deterministic)
+}
+func (m *PopFromPoolReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PopFromPoolReq.Merge(m, src)
+}
+func (m *PopFromPoolReq) XXX_Size() int {
+	return xxx_messageInfo_PopFromPoolReq.Size(m)
+}
+func (m *PopFromPoolReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_PopFromPoolReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PopFromPoolReq proto.InternalMessageInfo
+
+func (m *PopFromPoolReq) GetRegion() string {
+	if m != nil {
+		return m.Region
+	}
+	return ""
+}
+
+func (m *PopFromPoolReq) GetCustomerId() string {
+	if m != nil {
+		return m.CustomerId
+	}
+	return ""
+}
+
+func (m *PopFromPoolReq) GetPoolId() string {
+	if m != nil {
+		return m.PoolId
+	}
+	return ""
+}
+
+type PopFromPoolRes struct {
+	Voucher              string   `protobuf:"bytes,1,opt,name=voucher,proto3" json:"voucher,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PopFromPoolRes) Reset()         { *m = PopFromPoolRes{} }
+func (m *PopFromPoolRes) String() string { return proto.CompactTextString(m) }
+func (*PopFromPoolRes) ProtoMessage()    {}
+func (*PopFromPoolRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1e572ab4fba54a2c, []int{11}
+}
+
+func (m *PopFromPoolRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PopFromPoolRes.Unmarshal(m, b)
+}
+func (m *PopFromPoolRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PopFromPoolRes.Marshal(b, m, deterministic)
+}
+func (m *PopFromPoolRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PopFromPoolRes.Merge(m, src)
+}
+func (m *PopFromPoolRes) XXX_Size() int {
+	return xxx_messageInfo_PopFromPoolRes.Size(m)
+}
+func (m *PopFromPoolRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_PopFromPoolRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PopFromPoolRes proto.InternalMessageInfo
+
+func (m *PopFromPoolRes) GetVoucher() string {
+	if m != nil {
+		return m.Voucher
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*PingReq)(nil), "lsvoucherds.PingReq")
 	proto.RegisterType((*PingRes)(nil), "lsvoucherds.PingRes")
@@ -511,48 +610,53 @@ func init() {
 	proto.RegisterType((*TestRes)(nil), "lsvoucherds.TestRes")
 	proto.RegisterType((*UploadToPoolReq)(nil), "lsvoucherds.UploadToPoolReq")
 	proto.RegisterType((*UploadToPoolRes)(nil), "lsvoucherds.UploadToPoolRes")
-	proto.RegisterType((*GetPoolStatusReq)(nil), "lsvoucherds.GetPoolStatusReq")
-	proto.RegisterType((*GetPoolStatusRes)(nil), "lsvoucherds.GetPoolStatusRes")
-	proto.RegisterMapType((map[string]*GetPoolStatusRes_PoolStatus)(nil), "lsvoucherds.GetPoolStatusRes.PoolsStatusEntry")
-	proto.RegisterType((*GetPoolStatusRes_PoolStatus)(nil), "lsvoucherds.GetPoolStatusRes.PoolStatus")
+	proto.RegisterType((*GetPoolAvailabilityReq)(nil), "lsvoucherds.GetPoolAvailabilityReq")
+	proto.RegisterType((*GetPoolAvailabilityRes)(nil), "lsvoucherds.GetPoolAvailabilityRes")
+	proto.RegisterMapType((map[string]*GetPoolAvailabilityRes_GetPoolAvailability)(nil), "lsvoucherds.GetPoolAvailabilityRes.PoolAvailabilityEntry")
+	proto.RegisterType((*GetPoolAvailabilityRes_GetPoolAvailability)(nil), "lsvoucherds.GetPoolAvailabilityRes.GetPoolAvailability")
 	proto.RegisterType((*DeletePoolReq)(nil), "lsvoucherds.DeletePoolReq")
 	proto.RegisterType((*DeletePoolRes)(nil), "lsvoucherds.DeletePoolRes")
+	proto.RegisterType((*PopFromPoolReq)(nil), "lsvoucherds.PopFromPoolReq")
+	proto.RegisterType((*PopFromPoolRes)(nil), "lsvoucherds.PopFromPoolRes")
 }
 
 func init() { proto.RegisterFile("grpc/proto/voucherds.proto", fileDescriptor_1e572ab4fba54a2c) }
 
 var fileDescriptor_1e572ab4fba54a2c = []byte{
-	// 467 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0x8d, 0xe3, 0xa4, 0x69, 0xc6, 0x54, 0x8d, 0x46, 0x15, 0xb2, 0x56, 0x05, 0x45, 0xcb, 0x25,
-	0x27, 0x57, 0x4a, 0x39, 0x20, 0x0e, 0x88, 0x03, 0x50, 0xe5, 0x02, 0x91, 0x29, 0x5c, 0x91, 0x1b,
-	0xaf, 0x52, 0x8b, 0x25, 0xeb, 0x78, 0xd6, 0x91, 0xfa, 0x2f, 0xb8, 0xf2, 0xdb, 0xf8, 0x33, 0x68,
-	0x77, 0xed, 0xc6, 0x36, 0x25, 0x1c, 0x10, 0xb7, 0x7d, 0x6f, 0xde, 0xf3, 0x7c, 0xec, 0x8e, 0x81,
-	0xad, 0x8b, 0x7c, 0x75, 0x91, 0x17, 0x4a, 0xab, 0x8b, 0x9d, 0x2a, 0x57, 0xb7, 0xa2, 0x48, 0x29,
-	0xb2, 0x18, 0x03, 0x49, 0xf7, 0x14, 0x1f, 0xc3, 0x68, 0x99, 0x6d, 0xd6, 0xb1, 0xd8, 0xf2, 0x67,
-	0xf5, 0x91, 0x30, 0x84, 0xd1, 0x4e, 0x14, 0x94, 0xa9, 0x4d, 0xe8, 0x4d, 0xbd, 0xd9, 0x38, 0xae,
-	0xa1, 0xd1, 0x5f, 0x0b, 0xd2, 0x95, 0xde, 0x1d, 0xad, 0x3e, 0xa3, 0xcf, 0x89, 0xcc, 0x52, 0xab,
-	0x3f, 0x8e, 0x6b, 0xc8, 0x7f, 0x78, 0x70, 0xfa, 0x29, 0x97, 0x2a, 0x49, 0xaf, 0xd5, 0x52, 0x29,
-	0x19, 0x8b, 0x2d, 0x3e, 0x86, 0xa3, 0x42, 0xac, 0xf7, 0x1f, 0xaf, 0x10, 0x3e, 0x05, 0x58, 0x95,
-	0xa4, 0xd5, 0x37, 0x51, 0x2c, 0xd2, 0xb0, 0x6f, 0x63, 0x0d, 0xc6, 0xf8, 0x72, 0xa5, 0xe4, 0x22,
-	0x0d, 0x7d, 0xe7, 0x73, 0x08, 0x19, 0x1c, 0x97, 0x36, 0xc5, 0x22, 0x0d, 0x07, 0x36, 0x72, 0x8f,
-	0x4d, 0xac, 0x6a, 0x96, 0xc2, 0xe1, 0xd4, 0x37, 0xb1, 0x1a, 0xf3, 0xcb, 0x6e, 0x69, 0x84, 0x53,
-	0x08, 0xb4, 0xd2, 0x89, 0x74, 0xbc, 0xad, 0xcf, 0x8f, 0x9b, 0x14, 0x4f, 0x61, 0x72, 0x25, 0xb4,
-	0xd1, 0x7f, 0xd4, 0x89, 0x2e, 0xe9, 0x5f, 0x1a, 0x0a, 0x61, 0xe4, 0x5a, 0xa0, 0xd0, 0xb7, 0xb5,
-	0xd5, 0x90, 0x7f, 0xef, 0xff, 0x96, 0x86, 0x70, 0x09, 0x81, 0x21, 0xc8, 0x31, 0xa1, 0x37, 0xf5,
-	0x67, 0xc1, 0x3c, 0x8a, 0x1a, 0xd7, 0x19, 0x75, 0x3d, 0x51, 0xc3, 0xf0, 0x76, 0xa3, 0x8b, 0xbb,
-	0xb8, 0xf9, 0x09, 0xf6, 0x1a, 0x60, 0x2f, 0xc7, 0x33, 0x18, 0xda, 0x4e, 0xab, 0xb6, 0x1d, 0xc0,
-	0x73, 0x18, 0x27, 0xbb, 0x24, 0x93, 0xc9, 0x8d, 0x14, 0xb6, 0x07, 0x3f, 0xde, 0x13, 0xec, 0x16,
-	0x26, 0xdd, 0x14, 0x38, 0x01, 0xff, 0xab, 0xb8, 0xab, 0x66, 0x61, 0x8e, 0xf8, 0x0a, 0x86, 0xbb,
-	0x44, 0x96, 0xce, 0x1f, 0xcc, 0x67, 0x7f, 0xaf, 0xb9, 0x42, 0xce, 0xf6, 0xb2, 0xff, 0xc2, 0xe3,
-	0x5f, 0xe0, 0xe4, 0x8d, 0x90, 0x42, 0x8b, 0xff, 0xf4, 0x8c, 0xf8, 0x69, 0x3b, 0x01, 0xcd, 0x7f,
-	0xf6, 0x61, 0x70, 0x55, 0xe4, 0x2b, 0x7c, 0x0e, 0x03, 0xb3, 0x19, 0x78, 0xd6, 0xaa, 0xbb, 0xda,
-	0x1b, 0xf6, 0x10, 0x4b, 0xbc, 0x67, 0x5c, 0x66, 0x3f, 0x3a, 0xae, 0x6a, 0x7b, 0xd8, 0x43, 0xac,
-	0x71, 0xbd, 0x87, 0x47, 0xcd, 0x47, 0x89, 0xe7, 0x2d, 0x5d, 0x67, 0x95, 0xd8, 0xa1, 0x28, 0xf1,
-	0xde, 0xcc, 0xc3, 0x0f, 0x70, 0xd2, 0x1a, 0x30, 0x3e, 0x39, 0x34, 0xfc, 0x2d, 0x3b, 0x18, 0x36,
-	0x05, 0xbe, 0x03, 0xd8, 0x8f, 0x09, 0x59, 0x4b, 0xde, 0xba, 0x20, 0xf6, 0xe7, 0x18, 0xf1, 0xde,
-	0xcd, 0x91, 0xfd, 0x1b, 0x5d, 0xfe, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x9b, 0x37, 0x11, 0x9c, 0xab,
-	0x04, 0x00, 0x00,
+	// 513 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x54, 0x5f, 0x6f, 0xd3, 0x30,
+	0x10, 0x6f, 0x9a, 0x76, 0x5d, 0x2f, 0xc0, 0x26, 0x33, 0x26, 0xcb, 0x4c, 0xa8, 0xf2, 0x5e, 0x2a,
+	0x1e, 0x3a, 0xa9, 0x43, 0xe2, 0xcf, 0x1b, 0x12, 0x6c, 0xca, 0x03, 0xa8, 0x8a, 0x06, 0xaf, 0x90,
+	0x35, 0x56, 0x09, 0x78, 0x75, 0x6a, 0xbb, 0x95, 0x2a, 0xf1, 0x45, 0xf8, 0x26, 0x7c, 0x04, 0x3e,
+	0x16, 0xb2, 0x9d, 0xb4, 0x49, 0xc8, 0xc6, 0xa4, 0x69, 0x6f, 0xfe, 0xfd, 0xee, 0x77, 0x77, 0xbe,
+	0xf3, 0x9d, 0x81, 0xcc, 0x64, 0x36, 0x3d, 0xc9, 0xa4, 0xd0, 0xe2, 0x64, 0x25, 0x96, 0xd3, 0x6f,
+	0x4c, 0x26, 0x6a, 0x64, 0x31, 0x0a, 0xb8, 0xda, 0x50, 0xb4, 0x0f, 0xbd, 0x49, 0x3a, 0x9f, 0x45,
+	0x6c, 0x41, 0x8f, 0x8b, 0xa3, 0x42, 0x18, 0x7a, 0x2b, 0x26, 0x55, 0x2a, 0xe6, 0xd8, 0x1b, 0x78,
+	0xc3, 0x7e, 0x54, 0x40, 0xa3, 0xbf, 0x60, 0x4a, 0xe7, 0x7a, 0x77, 0xb4, 0xfa, 0x54, 0x7d, 0x8e,
+	0x79, 0x9a, 0x58, 0xfd, 0x6e, 0x54, 0x40, 0xfa, 0xcb, 0x83, 0xbd, 0x4f, 0x19, 0x17, 0x71, 0x72,
+	0x21, 0x26, 0x42, 0xf0, 0x88, 0x2d, 0xd0, 0x21, 0xec, 0x48, 0x36, 0xdb, 0x06, 0xcf, 0x11, 0x7a,
+	0x06, 0x30, 0x5d, 0x2a, 0x2d, 0xae, 0x98, 0x0c, 0x13, 0xdc, 0xb6, 0xb6, 0x12, 0x63, 0xfc, 0x32,
+	0x21, 0x78, 0x98, 0x60, 0xdf, 0xf9, 0x39, 0x84, 0x08, 0xec, 0x2e, 0x6d, 0x8a, 0x30, 0xc1, 0x1d,
+	0x6b, 0xd9, 0x60, 0x63, 0xcb, 0x8b, 0x55, 0xb8, 0x3b, 0xf0, 0x8d, 0xad, 0xc0, 0xf4, 0xb4, 0x7e,
+	0x35, 0x85, 0x06, 0x10, 0x68, 0xa1, 0x63, 0xee, 0x78, 0x7b, 0x3f, 0x3f, 0x2a, 0x53, 0xf4, 0x3b,
+	0x1c, 0x9e, 0x33, 0x6d, 0xf4, 0x6f, 0x57, 0x71, 0xca, 0xe3, 0xcb, 0x94, 0xa7, 0x7a, 0x7d, 0x97,
+	0xb2, 0x30, 0xf4, 0x5c, 0x21, 0x0a, 0xfb, 0xf6, 0x86, 0x05, 0xa4, 0x7f, 0xda, 0xd7, 0x24, 0x53,
+	0x88, 0xc1, 0x7e, 0x9d, 0xc6, 0xde, 0xc0, 0x1f, 0x06, 0xe3, 0xd7, 0xa3, 0xd2, 0xfb, 0x8e, 0x9a,
+	0xdd, 0x47, 0x75, 0xee, 0xfd, 0x5c, 0xcb, 0x75, 0xf4, 0x4f, 0x48, 0x12, 0xc2, 0xe3, 0x86, 0x08,
+	0xe8, 0x00, 0xba, 0xb6, 0x27, 0x79, 0x83, 0x1c, 0x40, 0x47, 0xd0, 0x8f, 0x9d, 0x8a, 0x33, 0x5b,
+	0xa7, 0x1f, 0x6d, 0x09, 0xf2, 0x13, 0x9e, 0x34, 0x66, 0x45, 0xfb, 0xe0, 0xff, 0x60, 0xeb, 0xbc,
+	0x69, 0xe6, 0x88, 0x3e, 0x40, 0x77, 0x15, 0xf3, 0xa5, 0x0b, 0x12, 0x8c, 0x5f, 0xde, 0xa6, 0xa2,
+	0x26, 0xda, 0x45, 0x79, 0xd3, 0x7e, 0xe5, 0xd1, 0x2f, 0xf0, 0xf0, 0x1d, 0xe3, 0x4c, 0xb3, 0x7b,
+	0x1a, 0x42, 0xba, 0x57, 0x4d, 0xa0, 0xe8, 0x57, 0x78, 0x34, 0x11, 0xd9, 0x99, 0x14, 0x57, 0xf7,
+	0x95, 0xf2, 0x79, 0x2d, 0x83, 0xdb, 0x5b, 0xd7, 0xa8, 0xcd, 0xde, 0x3a, 0x38, 0xfe, 0xed, 0x43,
+	0xe7, 0x5c, 0x66, 0x53, 0xf4, 0x02, 0x3a, 0x66, 0xcb, 0xd1, 0x41, 0xa5, 0xa9, 0xf9, 0x1f, 0x40,
+	0x9a, 0x58, 0x45, 0x5b, 0xc6, 0xcb, 0xec, 0x7a, 0xcd, 0x2b, 0xff, 0x09, 0x48, 0x13, 0x6b, 0xbc,
+	0x3e, 0xc2, 0x83, 0xf2, 0x82, 0xa1, 0xa3, 0x8a, 0xae, 0xf6, 0x2d, 0x90, 0x9b, 0xac, 0x8a, 0xb6,
+	0x86, 0x1e, 0x8a, 0x9b, 0xa7, 0xf1, 0xf8, 0xff, 0xf3, 0xb1, 0x20, 0xb7, 0x10, 0x99, 0x2b, 0x9f,
+	0x01, 0x6c, 0x9f, 0x11, 0x91, 0x8a, 0x53, 0x65, 0x80, 0xc8, 0xf5, 0x36, 0x13, 0x27, 0x84, 0xa0,
+	0xf4, 0x36, 0xe8, 0x69, 0xb5, 0xaf, 0x95, 0xb9, 0x20, 0x37, 0x18, 0x15, 0x6d, 0x5d, 0xee, 0xd8,
+	0x6f, 0xfb, 0xf4, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x82, 0x2c, 0xd6, 0x41, 0xd4, 0x05, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -570,8 +674,9 @@ type GrpcClient interface {
 	Ping(ctx context.Context, in *PingReq, opts ...grpc.CallOption) (*PingRes, error)
 	Test(ctx context.Context, in *TestReq, opts ...grpc.CallOption) (*TestRes, error)
 	UploadToPool(ctx context.Context, opts ...grpc.CallOption) (Grpc_UploadToPoolClient, error)
-	GetPoolStatus(ctx context.Context, in *GetPoolStatusReq, opts ...grpc.CallOption) (*GetPoolStatusRes, error)
+	GetPoolAvailability(ctx context.Context, in *GetPoolAvailabilityReq, opts ...grpc.CallOption) (*GetPoolAvailabilityRes, error)
 	DeletePool(ctx context.Context, in *DeletePoolReq, opts ...grpc.CallOption) (*DeletePoolRes, error)
+	PopFromPool(ctx context.Context, in *PopFromPoolReq, opts ...grpc.CallOption) (*PopFromPoolRes, error)
 }
 
 type grpcClient struct {
@@ -634,9 +739,9 @@ func (x *grpcUploadToPoolClient) CloseAndRecv() (*UploadToPoolRes, error) {
 	return m, nil
 }
 
-func (c *grpcClient) GetPoolStatus(ctx context.Context, in *GetPoolStatusReq, opts ...grpc.CallOption) (*GetPoolStatusRes, error) {
-	out := new(GetPoolStatusRes)
-	err := c.cc.Invoke(ctx, "/lsvoucherds.Grpc/GetPoolStatus", in, out, opts...)
+func (c *grpcClient) GetPoolAvailability(ctx context.Context, in *GetPoolAvailabilityReq, opts ...grpc.CallOption) (*GetPoolAvailabilityRes, error) {
+	out := new(GetPoolAvailabilityRes)
+	err := c.cc.Invoke(ctx, "/lsvoucherds.Grpc/GetPoolAvailability", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -652,13 +757,23 @@ func (c *grpcClient) DeletePool(ctx context.Context, in *DeletePoolReq, opts ...
 	return out, nil
 }
 
+func (c *grpcClient) PopFromPool(ctx context.Context, in *PopFromPoolReq, opts ...grpc.CallOption) (*PopFromPoolRes, error) {
+	out := new(PopFromPoolRes)
+	err := c.cc.Invoke(ctx, "/lsvoucherds.Grpc/PopFromPool", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GrpcServer is the server API for Grpc service.
 type GrpcServer interface {
 	Ping(context.Context, *PingReq) (*PingRes, error)
 	Test(context.Context, *TestReq) (*TestRes, error)
 	UploadToPool(Grpc_UploadToPoolServer) error
-	GetPoolStatus(context.Context, *GetPoolStatusReq) (*GetPoolStatusRes, error)
+	GetPoolAvailability(context.Context, *GetPoolAvailabilityReq) (*GetPoolAvailabilityRes, error)
 	DeletePool(context.Context, *DeletePoolReq) (*DeletePoolRes, error)
+	PopFromPool(context.Context, *PopFromPoolReq) (*PopFromPoolRes, error)
 }
 
 func RegisterGrpcServer(s *grpc.Server, srv GrpcServer) {
@@ -727,20 +842,20 @@ func (x *grpcUploadToPoolServer) Recv() (*UploadToPoolReq, error) {
 	return m, nil
 }
 
-func _Grpc_GetPoolStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPoolStatusReq)
+func _Grpc_GetPoolAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPoolAvailabilityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GrpcServer).GetPoolStatus(ctx, in)
+		return srv.(GrpcServer).GetPoolAvailability(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/lsvoucherds.Grpc/GetPoolStatus",
+		FullMethod: "/lsvoucherds.Grpc/GetPoolAvailability",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GrpcServer).GetPoolStatus(ctx, req.(*GetPoolStatusReq))
+		return srv.(GrpcServer).GetPoolAvailability(ctx, req.(*GetPoolAvailabilityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -763,6 +878,24 @@ func _Grpc_DeletePool_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Grpc_PopFromPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PopFromPoolReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).PopFromPool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lsvoucherds.Grpc/PopFromPool",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).PopFromPool(ctx, req.(*PopFromPoolReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Grpc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "lsvoucherds.Grpc",
 	HandlerType: (*GrpcServer)(nil),
@@ -776,12 +909,16 @@ var _Grpc_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Grpc_Test_Handler,
 		},
 		{
-			MethodName: "GetPoolStatus",
-			Handler:    _Grpc_GetPoolStatus_Handler,
+			MethodName: "GetPoolAvailability",
+			Handler:    _Grpc_GetPoolAvailability_Handler,
 		},
 		{
 			MethodName: "DeletePool",
 			Handler:    _Grpc_DeletePool_Handler,
+		},
+		{
+			MethodName: "PopFromPool",
+			Handler:    _Grpc_PopFromPool_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
