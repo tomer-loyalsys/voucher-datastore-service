@@ -1,0 +1,74 @@
+syntax = "proto3";
+package lsvoucherds;
+
+//import "grpc/proto/entity.proto";
+
+// Ping rpc to check that handler respond
+message PingReq {
+
+}
+message PingRes {
+    string version = 1;
+}
+
+// Test rpc
+message TestReq {
+}
+message TestRes {
+    bool isValid = 1;
+}
+
+// Add upload vouchers rpc
+message UploadToPoolReq {
+    string region = 1;
+    string customerId = 2;
+    string poolId = 3;
+    string uploadId = 4;
+    repeated string vouchers = 5;
+}
+message UploadToPoolRes {
+    int64 totalUpload = 1;
+}
+
+// Delete all pool uploads vouchers rpc
+message DeleteAllUploadsReq {
+    string poolId = 1;
+}
+message DeleteAllUploadsRes {
+
+}
+
+// Get number of available vouchers rpc
+message GetPoolStatusReq {
+    string region = 1;
+    string customerId = 2;
+    repeated string poolIds = 3;
+}
+message GetPoolStatusRes {
+    message PoolStatus {
+        int64 total = 1;
+        int64 available = 2;
+    }
+
+    map<string, PoolStatus> PoolsStatus = 1;
+}
+
+service Grpc {
+    rpc Ping (PingReq) returns (PingRes) {
+    }
+
+    rpc Test (TestReq) returns (TestRes) {
+    }
+
+    rpc UploadToPool (stream UploadToPoolReq) returns (UploadToPoolRes) {
+    }
+
+    rpc GetPoolStatus (GetPoolStatusReq) returns (GetPoolStatusRes) {
+    }
+
+    //    rpc DeleteAllUploads (UploadToPoolReq) returns (UploadToPoolRes) {
+    //    }
+    //
+    //    rpc GetAvailableVouchersNumber (GetAvailableVouchersNumberReq) returns (GetAvailableVouchersNumberRes) {
+    //    }
+}

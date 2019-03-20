@@ -1,0 +1,7 @@
+.env
+.env.local
+.env.docker
+.env.dev
+.env.prod
+vendor/
+.idea
