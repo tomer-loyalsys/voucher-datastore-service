@@ -12,8 +12,8 @@ type GrpcClient struct {
 	mock.Mock
 }
 
-// GetPoolStatus provides a mock function with given fields: ctx, in, opts
-func (_m *GrpcClient) GetPoolStatus(ctx context.Context, in *lsvoucherds.GetPoolStatusReq, opts ...grpc.CallOption) (*lsvoucherds.GetPoolStatusRes, error) {
+// DeletePool provides a mock function with given fields: ctx, in, opts
+func (_m *GrpcClient) DeletePool(ctx context.Context, in *lsvoucherds.DeletePoolReq, opts ...grpc.CallOption) (*lsvoucherds.DeletePoolRes, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -23,17 +23,47 @@ func (_m *GrpcClient) GetPoolStatus(ctx context.Context, in *lsvoucherds.GetPool
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *lsvoucherds.GetPoolStatusRes
-	if rf, ok := ret.Get(0).(func(context.Context, *lsvoucherds.GetPoolStatusReq, ...grpc.CallOption) *lsvoucherds.GetPoolStatusRes); ok {
+	var r0 *lsvoucherds.DeletePoolRes
+	if rf, ok := ret.Get(0).(func(context.Context, *lsvoucherds.DeletePoolReq, ...grpc.CallOption) *lsvoucherds.DeletePoolRes); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*lsvoucherds.GetPoolStatusRes)
+			r0 = ret.Get(0).(*lsvoucherds.DeletePoolRes)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *lsvoucherds.GetPoolStatusReq, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *lsvoucherds.DeletePoolReq, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPoolAvailability provides a mock function with given fields: ctx, in, opts
+func (_m *GrpcClient) GetPoolAvailability(ctx context.Context, in *lsvoucherds.GetPoolAvailabilityReq, opts ...grpc.CallOption) (*lsvoucherds.GetPoolAvailabilityRes, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *lsvoucherds.GetPoolAvailabilityRes
+	if rf, ok := ret.Get(0).(func(context.Context, *lsvoucherds.GetPoolAvailabilityReq, ...grpc.CallOption) *lsvoucherds.GetPoolAvailabilityRes); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*lsvoucherds.GetPoolAvailabilityRes)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *lsvoucherds.GetPoolAvailabilityReq, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -64,6 +94,36 @@ func (_m *GrpcClient) Ping(ctx context.Context, in *lsvoucherds.PingReq, opts ..
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *lsvoucherds.PingReq, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// PopFromPool provides a mock function with given fields: ctx, in, opts
+func (_m *GrpcClient) PopFromPool(ctx context.Context, in *lsvoucherds.PopFromPoolReq, opts ...grpc.CallOption) (*lsvoucherds.PopFromPoolRes, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *lsvoucherds.PopFromPoolRes
+	if rf, ok := ret.Get(0).(func(context.Context, *lsvoucherds.PopFromPoolReq, ...grpc.CallOption) *lsvoucherds.PopFromPoolRes); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*lsvoucherds.PopFromPoolRes)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *lsvoucherds.PopFromPoolReq, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
